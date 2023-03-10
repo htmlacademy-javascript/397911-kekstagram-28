@@ -3,10 +3,10 @@ const pictureTemplate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
 
-const pictures = document.createDocumentFragment();
-
 export const insertPhotos = (photos) => {
-  photos.forEach(({ url, likes, comments }) => {
+  const pictures = document.createDocumentFragment();
+
+  const insertPhoto = ({ url, likes, comments }) => {
     const picture = pictureTemplate.cloneNode(true);
 
     const image = picture.querySelector('.picture__img');
@@ -19,7 +19,9 @@ export const insertPhotos = (photos) => {
     commentsContainer.textContent = comments.length;
 
     pictures.append(picture);
-  });
+  };
+
+  photos.forEach(insertPhoto);
 
   picturesContainer.appendChild(pictures);
 };
