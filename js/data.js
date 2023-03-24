@@ -31,7 +31,7 @@ const DESCRIPTIONS = [
 const PHOTO_COUNT = 25;
 const AVATAR_COUNT = 6;
 const LIKE_MIN_COUNT = 15;
-const LIKE_MAX_COUNT = 15;
+const LIKE_MAX_COUNT = 115;
 const COMMENT_COUNT = 7;
 
 const getPhotoId = createIdGenerator();
