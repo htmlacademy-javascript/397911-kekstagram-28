@@ -13,8 +13,35 @@ const createCommentElement = ({avatar, message, name}) => {
 };
 
 export const renderComments = (comments) => {
-  socialComments.innerHTML = '';
+  let lastRenderedCommentsCount = 0;
+  const PAGE_SIZE = 5;
+  const commentsLoader = document.querySelector('.comments-loader');
+  const commentsCount = document.querySelector('.comments-count');
+  const commentsShown = document.querySelector('.comments-shown');
 
-  const commentElements = comments.map((comment) => createCommentElement(comment));
-  socialComments.append(...commentElements);
+  commentsLoader.classList.remove('hidden');
+  socialComments.innerHTML = '';
+  commentsCount.textContent = comments.length;
+
+  const showNextComments = () => {
+    const start = lastRenderedCommentsCount;
+    let end = lastRenderedCommentsCount + PAGE_SIZE;
+    if (end > comments.length) {
+      end = comments.length;
+    }
+
+    const commentElements = comments.slice(start, end).map((comment) => createCommentElement(comment));
+    socialComments.append(...commentElements);
+
+    lastRenderedCommentsCount = end;
+
+    if (lastRenderedCommentsCount >= comments.length) {
+      commentsLoader.classList.add('hidden');
+    }
+    commentsShown.textContent = lastRenderedCommentsCount;
+  };
+
+  showNextComments();
+
+  commentsLoader.addEventListener('click', showNextComments);
 };
