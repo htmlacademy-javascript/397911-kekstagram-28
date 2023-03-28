@@ -1,3 +1,7 @@
+const MAX_HASHTAGS_COUNT = 5;
+const ERROR_TEXT = 'Неправильно заполнено поле';
+const REGEXP = /^#[a-zа-яё0-9]{1,19}$/i;
+
 const formElement = document.querySelector('.img-upload__form');
 const uploadFile = formElement.querySelector('#upload-file');
 const overlayElement = formElement.querySelector('.img-upload__overlay');
@@ -36,6 +40,10 @@ function onDocumentKeydown (evt) {
   }
 }
 
+overlayElement.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+});
+
 const onCancelButtonClick = () => {
   closePreviewModal();
 };
@@ -44,9 +52,28 @@ const onFileInputChange = () => {
   openPreviewModal();
 };
 
-// pristine.addValidator(
+const isTagValid = (tag) => REGEXP.test(tag);
 
-// );
+const isLenghtValid = (tags) => tags.length <= MAX_HASHTAGS_COUNT;
+
+const isCaseValid = (tags) => {
+  const lowerCase = tags.map((tag) => tag.toLowerCase());
+  return lowerCase.length === new Set(lowerCase).size;
+};
+
+
+const areTagsValid = (text) => {
+  const tags = text.split(' ').filter((tag) => tag !== '');
+
+  return tags.every(isTagValid) && isLenghtValid(tags) && isCaseValid(tags);
+
+};
+
+pristine.addValidator(
+  hashtagsElement,
+  areTagsValid,
+  ERROR_TEXT
+);
 
 const onFormSubmit = (evt) => {
   if (!pristine.validate()) {
