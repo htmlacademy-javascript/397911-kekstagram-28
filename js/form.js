@@ -1,3 +1,6 @@
+import {resetScale} from './scale.js';
+import {resetEffects} from './effect.js';
+
 const MAX_HASHTAGS_COUNT = 5;
 const ERROR_TEXT = 'Неправильно заполнено поле';
 const REGEXP = /^#[a-zа-яё0-9]{1,19}$/i;
@@ -9,7 +12,6 @@ const previewCancelBtn = formElement.querySelector('#upload-cancel');
 const hashtagsElement = formElement.querySelector('.text__hashtags');
 const descriptionElement = formElement.querySelector('.text__description');
 
-
 const pristine = new Pristine(formElement, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
@@ -20,12 +22,15 @@ const openPreviewModal = () => {
   overlayElement.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onDocumentKeydown);
+  resetScale();
 };
 
 const closePreviewModal = () => {
   overlayElement.classList.add('hidden');
   document.body.classList.remove('modal-open');
   formElement.reset();
+  resetScale();
+  resetEffects();
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
@@ -60,7 +65,6 @@ const isCaseValid = (tags) => {
   const lowerCase = tags.map((tag) => tag.toLowerCase());
   return lowerCase.length === new Set(lowerCase).size;
 };
-
 
 const areTagsValid = (text) => {
   const tags = text.split(' ').filter((tag) => tag !== '');
