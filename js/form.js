@@ -4,6 +4,10 @@ import {resetEffects} from './effect.js';
 const MAX_HASHTAGS_COUNT = 5;
 const ERROR_TEXT = 'Неправильно заполнено поле';
 const REGEXP = /^#[a-zа-яё0-9]{1,19}$/i;
+const SubmitButtonText = {
+  IDLE: 'Опубликовать',
+  SENDING: 'Опубликовываю...'
+};
 
 const formElement = document.querySelector('.img-upload__form');
 const uploadFile = formElement.querySelector('#upload-file');
@@ -11,6 +15,7 @@ const overlayElement = formElement.querySelector('.img-upload__overlay');
 const previewCancelBtn = formElement.querySelector('#upload-cancel');
 const hashtagsElement = formElement.querySelector('.text__hashtags');
 const descriptionElement = formElement.querySelector('.text__description');
+const submitButton = formElement.querySelector('.img-upload__submit');
 
 const pristine = new Pristine(formElement, {
   classTo: 'img-upload__field-wrapper',
@@ -70,14 +75,7 @@ const areTagsValid = (text) => {
   const tags = text.split(' ').filter((tag) => tag !== '');
 
   return tags.every(isTagValid) && isLenghtValid(tags) && isCaseValid(tags);
-
 };
-
-pristine.addValidator(
-  hashtagsElement,
-  areTagsValid,
-  ERROR_TEXT
-);
 
 const onFormSubmit = (evt) => {
   if (!pristine.validate()) {
@@ -85,6 +83,33 @@ const onFormSubmit = (evt) => {
   }
 };
 
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = SubmitButtonText.SENDING;
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = SubmitButtonText.IDLE;
+};
+
+pristine.addValidator(hashtagsElement, areTagsValid, ERROR_TEXT);
+
+const setOnFormSubmit = (cb) => {
+  formElement.addEventListener('submit', async (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+
+    if (isValid) {
+      blockSubmitButton();
+      await cb(new FormData(formElement));
+      unblockSubmitButton();
+    }
+  });
+};
+
 uploadFile.addEventListener('change', onFileInputChange);
 previewCancelBtn.addEventListener('click',onCancelButtonClick);
 formElement.addEventListener('submit', onFormSubmit);
+
+export {setOnFormSubmit, closePreviewModal};

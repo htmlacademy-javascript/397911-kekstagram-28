@@ -1,28 +1,32 @@
-import { insertPhotos } from './photos.js';
+const BASE_URL = 'https://28.javascript.pages.academy/kekstagram';
+const Route = {
+  GET_DATA: '/data',
+  SEND_DATA: '/',
+};
+const Method = {
+  GET: 'GET',
+  POST: 'POST',
+};
+const ErrorText = {
+  GET_DATA: 'Не удалось загрузить данные. Попробуйте обновить страницу',
+  SEND_DATA: 'Не удалось отправить форму. Попробуйте ещё раз',
+};
 
-const ERROR_SHOW_TIME = 5000;
+const load = (route, errorText, method = Method.GET, body = null) =>
+  fetch(`${BASE_URL}${route}`, {method, body})
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
+      return response.json();
+    })
+    .catch(() => {
+      throw new Error(errorText);
+    });
 
-const errorTemplate = document.querySelector('#fetch-error')
-  .content
-  .querySelector('.fetch-error');
+const getData = () => load(Route.GET_DATA, ErrorText.GET_DATA);
 
-fetch('https://28.javascript.pages.academy/kekstagram/data')
-  .then((res) => {
-    if (res.status !== 200) {
-      throw new Error(`Response status ${res.status}`);
-    }
-    return res;
-  })
-  .then((res) => res.json())
-  .then((json) => {
-    insertPhotos(json);
-  })
-  .catch((e) => {
-    const errorElement = errorTemplate.cloneNode(true);
-    errorElement.innerText = e.message;
-    document.body.appendChild(errorElement);
+const sendData = (body) => load(Route.SEND_DATA, ErrorText.SEND_DATA, Method.POST, body);
 
-    setTimeout(() => {
-      errorElement.remove();
-    }, ERROR_SHOW_TIME);
-  });
+export {getData, sendData};
+
