@@ -1,19 +1,17 @@
-const getRandomInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
+const ERROR_SHOW_TIME = 5000;
+
+const errorTemplate = document.querySelector('#fetch-error')
+  .content
+  .querySelector('.fetch-error');
+
+const showAlert = (message) => {
+  const errorElement = errorTemplate.cloneNode(true);
+  errorElement.textContent = message;
+  document.body.appendChild(errorElement);
+
+  setTimeout(() => {
+    errorElement.remove();
+  }, ERROR_SHOW_TIME);
 };
 
-const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
-
-const createIdGenerator = () => {
-  let id = 0;
-  const getNextId = () => {
-    id++;
-    return id;
-  };
-  return getNextId;
-};
-
-export { getRandomInteger, getRandomArrayElement, createIdGenerator };
+export {showAlert};
