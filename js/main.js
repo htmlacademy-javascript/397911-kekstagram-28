@@ -6,6 +6,7 @@ import {showAlert, debounce} from './util.js';
 import {getData, sendData} from './server-data.js';
 import {showSuccessMessage, showErrorMessage} from './messages.js';
 import {init, getSortedPictures} from './filter.js';
+import './avatar.js';
 
 setOnFormSubmit(async (data) => {
   try {
